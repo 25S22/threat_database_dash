@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center h-screen bg-black">
+    <div class="bg-gray-900 text-white p-8 rounded-xl shadow-md w-96 text-center">
+        <h2 class="text-2xl font-bold mb-6">User Registration</h2>
+        <form method="POST" action="{{ url_for('register') }}" class="space-y-4">
+            <div class="text-left">
+                <label for="username" class="block text-gray-400 mb-1">Username</label>
+                <input type="text" id="username" name="username" required
+                    class="w-full p-3 bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="text-left">
+                <label for="password" class="block text-gray-400 mb-1">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full p-3 bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button type="submit" 
+                class="w-full p-3 bg-blue-900 rounded-lg hover:bg-blue-700 transition">
+                Register
+            </button>
+        </form>
+        <p class="mt-4 text-gray-400">
+            Already have an account? <a href="{{ url_for('user_login') }}" class="text-blue-400 hover:underline">Login</a>
+        </p>
+        <a href="{{ url_for('index') }}" class="block mt-2 text-gray-400 hover:text-gray-300 transition">
+            Back to Selection
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+    "admin": {
+        "password": "admin123",
+        "permissions": {
+            "view_stats": true,
+            "view_detailed_data": true
+        }
+    },
+    "alice": {
+        "password": "alice123",
+        "permissions": {
+            "view_stats": true,
+            "view_detailed_data": false
+        }
+    },
+    "bob": {
+        "password": "bob123",
+        "permissions": {
+            "view_stats": false,
+            "view_detailed_data": true
+        }
+    }
+}

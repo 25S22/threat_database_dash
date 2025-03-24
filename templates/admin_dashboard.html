@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+            white-space: nowrap; /* Prevents text wrapping */
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        tr:hover {
+            background-color: #444;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+        .btn-blue {
+            background-color: #1E90FF;
+        }
+        .btn-red {
+            background-color: #DC3545;
+        }
+        .btn-logout {
+            background-color: #FF6347;
+        }
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #ccc;
+            background-color: #1a1a1a;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white min-h-screen">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+        </div>
+
+        <!-- File Upload Form -->
+        <form action="{{ url_for('admin_dashboard') }}" method="POST" enctype="multipart/form-data" class="mb-6">
+            <label for="fileUpload" class="block mb-2 text-lg">Upload CSV or TXT File:</label>
+            <input type="file" name="fileUpload" id="fileUpload" class="w-full p-3 bg-gray-800 rounded-lg">
+            <button type="submit" class="btn btn-blue mt-4 w-full">Upload File</button>
+        </form>
+
+        <!-- Delete All Devices -->
+        <form action="{{ url_for('delete_all') }}" method="POST" class="mb-6">
+            <button type="submit" class="btn btn-red w-full">Delete All Devices</button>
+        </form>
+
+        <!-- User Management Section -->
+        <h2 class="text-2xl mb-4">User Management</h2>
+        <form method="POST" action="{{ url_for('admin_dashboard') }}" class="mb-6">
+            <div class="table-container">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-800">
+                            <th class="p-3">Username</th>
+                            <th class="p-3">Access Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user, info in users.items() %}
+                        {% if info['role'] == 'user' %}
+                        <tr class="border-t border-gray-700 hover:bg-gray-700 transition">
+                            <td class="p-3">{{ user }}</td>
+                            <td class="p-3">
+                                <select name="{{ user }}" class="p-2 rounded bg-gray-800 text-white">
+                                    <option value="full" {% if permissions[user] == 'full' %}selected{% endif %}>Full Access</option>
+                                    <option value="stats" {% if permissions[user] == 'stats' %}selected{% endif %}>Stats Only</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-blue mt-4 w-full">Update Permissions</button>
+        </form>
+
+        <!-- Devices Table -->
+        <h2 class="text-2xl mb-4">Uploaded Devices</h2>
+        {% if devices %}
+        <div class="table-container">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-800">
+                        <th class="p-3">IP Address</th>
+                        <th class="p-3">Company</th>
+                        <th class="p-3">Location</th>
+                        <th class="p-3">ISP</th>
+                        <th class="p-3">OS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for device in devices %}
+                    <tr class="border-t border-gray-700 hover:bg-gray-700 transition">
+                        <td class="p-3">{{ device.ip }}</td>
+                        <td class="p-3">{{ device.company }}</td>
+                        <td class="p-3">{{ device.location }}</td>
+                        <td class="p-3">{{ device.isp }}</td>
+                        <td class="p-3">{{ device.os }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-400 mt-4">No devices uploaded yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

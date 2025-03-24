@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Database Dashboard</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: normal;
+        }
+        .logout-btn {
+            background-color: #8B0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dashboard-container {
+            padding: 20px 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .stat-card {
+            background-color: #121212;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .stat-title {
+            font-size: 16px;
+            margin: 0 0 15px 0;
+            color: #ccc;
+        }
+        .stat-value {
+            font-size: 40px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .device-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        .device-table th, .device-table td {
+            padding: 10px;
+            border: 1px solid #333;
+        }
+        .device-table th {
+            background-color: #121212;
+        }
+        .hidden {
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Device Database</h1>
+        <button class="logout-btn" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                <path d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+            </svg>
+            Logout
+        </button>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Statistics Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-title">Total Devices</p>
+                <p class="stat-value" id="totalDevices">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-title">Unique Companies</p>
+                <p class="stat-value" id="uniqueCompanies">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-title">Unique ISPs</p>
+                <p class="stat-value" id="uniqueIsps">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-title">Unique Locations</p>
+                <p class="stat-value" id="uniqueLocations">0</p>
+            </div>
+        </div>
+
+        <!-- Device Details Section -->
+        <h2 style="margin-top: 40px;" id="deviceDetailsHeading" class="hidden">Device Details</h2>
+        <table class="device-table hidden" id="deviceTable">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>ISP</th>
+                </tr>
+            </thead>
+            <tbody id="deviceTableBody">
+                <!-- Table rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function logout() {
+            window.location.href = "{{ url_for('logout') }}";
+        }
+
+        console.log("User dashboard loaded.");
+
+        // Fetch statistics
+        fetch('/api/statistics')
+            .then(response => response.json())
+            .then(data => {
+                console.log("Stats Data:", data);
+                
+                // Display stats correctly
+                document.getElementById('totalDevices').textContent = data.totalDevices || "0";
+                document.getElementById('uniqueCompanies').textContent = data.uniqueCompanies || "0";
+                document.getElementById('uniqueIsps').textContent = data.uniqueIsps || "0";
+                document.getElementById('uniqueLocations').textContent = data.uniqueLocations || "0";
+            })
+            .catch(error => console.error("Error fetching statistics:", error));
+
+        // Fetch devices and show based on access level
+        fetch('/api/devices')
+            .then(response => response.json())
+            .then(devices => {
+                const accessLevel = "{{ access_level }}";
+                console.log("Access Level:", accessLevel);
+
+                const deviceTable = document.getElementById('deviceTable');
+                const deviceTableBody = document.getElementById('deviceTableBody');
+                const deviceDetailsHeading = document.getElementById('deviceDetailsHeading');
+
+                // Show device details only for full access users
+                if (accessLevel === "full") {
+                    deviceTable.classList.remove('hidden');
+                    deviceDetailsHeading.classList.remove('hidden');
+
+                    deviceTableBody.innerHTML = "";
+                    if (devices.length === 0) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td colspan="4" style="text-align: center;">No devices found.</td>`;
+                        deviceTableBody.appendChild(row);
+                    } else {
+                        devices.forEach(device => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${device.ip}</td>
+                                <td>${device.company}</td>
+                                <td>${device.location}</td>
+                                <td>${device.isp}</td>
+                            `;
+                            deviceTableBody.appendChild(row);
+                        });
+                    }
+                }
+            })
+            .catch(error => console.error("Error fetching devices:", error));
+    </script>
+</body>
+</html>

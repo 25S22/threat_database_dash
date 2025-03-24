@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Database Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center h-screen bg-black">
+    <div class="bg-gray-900 text-white p-8 rounded-xl shadow-md w-96 text-center">
+        <h2 class="text-2xl font-bold mb-6">Threat Database Access</h2>
+        <div class="space-y-4">
+            <button onclick="window.location.href='{{ url_for('admin_login') }}'" 
+                class="w-full flex items-center justify-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                <span class="mr-2">🛡️</span> Admin Login
+            </button>
+            <button onclick="window.location.href='{{ url_for('user_login') }}'" 
+                class="w-full flex items-center justify-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                <span class="mr-2">👤</span> User Portal
+            </button>
+        </div>
+        <p class="mt-4 text-gray-400 text-center">
+            <a href="{{ url_for('privacy') }}" class="text-blue-400 hover:underline">Privacy Policy</a>
+        </p>
+    </div>
+</body>
+</html>
