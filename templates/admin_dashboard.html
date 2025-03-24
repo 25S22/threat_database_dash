@@ -123,7 +123,7 @@
                 <thead>
                     <tr class="bg-gray-800">
                         <th class="p-3">IP Address</th>
-                        <th class="p-3">Company</th>
+                        <th class="p-3">Date/Time</th> <!-- Replaced Company with Date/Time -->
                         <th class="p-3">Location</th>
                         <th class="p-3">ISP</th>
                         <th class="p-3">OS</th>
@@ -133,7 +133,7 @@
                     {% for device in devices %}
                     <tr class="border-t border-gray-700 hover:bg-gray-700 transition">
                         <td class="p-3">{{ device.ip }}</td>
-                        <td class="p-3">{{ device.company }}</td>
+                        <td class="p-3">{{ device.date_time }}</td> <!-- Display Date/Time -->
                         <td class="p-3">{{ device.location }}</td>
                         <td class="p-3">{{ device.isp }}</td>
                         <td class="p-3">{{ device.os }}</td>

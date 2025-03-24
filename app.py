@@ -165,7 +165,7 @@ def admin_dashboard():
             # Remove duplicates
             df = df.drop_duplicates(subset=["IP Address"], keep='first')
 
-            # Prepare new devices
+            # Prepare new devices with Date/Time instead of Company
             new_devices = []
             for _, row in df.iterrows():
                 ip_val = row.get('IP Address', '')
@@ -173,7 +173,7 @@ def admin_dashboard():
                     continue
                 device_info = {
                     'ip': str(ip_val).strip(),
-                    'company': str(row.get('Host Name', '')).strip(),
+                    'date_time': str(row.get('Date/Time', '')).strip(),  # Changed to Date/Time
                     'location': str(row.get('Country', '')).strip(),
                     'isp': str(row.get('ISP', '')).strip(),
                     'os': str(row.get('Operating System', '')).strip()
@@ -226,13 +226,11 @@ def user_dashboard():
 @app.route('/api/statistics')
 def api_statistics():
     total_devices = len(devices_db)
-    unique_companies = len({d['company'] for d in devices_db if d.get('company')})
     unique_isps = len({d['isp'] for d in devices_db if d.get('isp')})
     unique_locations = len({d['location'] for d in devices_db if d.get('location')})
 
     stats = {
         "totalDevices": total_devices,
-        "uniqueCompanies": unique_companies,
         "uniqueIsps": unique_isps,
         "uniqueLocations": unique_locations
     }
